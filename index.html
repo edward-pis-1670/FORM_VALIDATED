@@ -48,7 +48,8 @@
     <script>
         Validator({
             form: '#form-1',
-            errorElement: '.form-message',
+            formGroupSelector: '.form-group',
+            errorM: '.form-message',
             rules: [
               Validator.isRequired('#fullname', 'Vui lòng nhập tên đầy đủ của bạn'),
               Validator.isRequired('#email'),

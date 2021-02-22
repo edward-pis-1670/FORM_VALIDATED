@@ -1,22 +1,32 @@
 
 // Constructor function (Doi tuong Validator)
 function Validator(options) {
+    // tao ham lay the cha ngoai cung
+    function  getParent(element, selector) {
+        // element thuc ra chinh la inputElement da co
+        while (element.parentElement) {
+            if (element.parentElement.matches(selector)) {
+                return element.parentElement;
+            }
+            element = element.parentElement;
+        }
+    }
     var colectionRules = {};
     // Ham thuc hien validate
     function validate(inputElement, rule) {
-        var errorMessage;
         var rules = colectionRules[rule.selector];
-        var errorElement = inputElement.parentElement.querySelector(options.errorElement);
+        var errorElement = getParent(inputElement, options.formGroupSelector).querySelector(options.errorM);
+        var errorMessage;
         for(i = 0; i < rules.length; i++) {
             errorMessage = rules[i](inputElement.value)
             if (errorMessage) break;
         }
         if(errorMessage) {
             errorElement.innerText = errorMessage;
-            inputElement.parentElement.classList.add('invalid')
+            getParent(inputElement, options.formGroupSelector).classList.add('invalid')
         } else {
             errorElement.innerText = '';
-            inputElement.parentElement.classList.remove('invalid')
+            getParent(inputElement, options.formGroupSelector).classList.remove('invalid')
         }
         return !errorMessage;
     }
@@ -38,9 +48,9 @@ function Validator(options) {
 
                 // Xu ly truong hop moi khi nguoi dung nhap vao input
                 inputElement.oninput = function() {
-                    var errorElement = inputElement.parentElement.querySelector('.form-message');
+                    var errorElement = getParent(inputElement, options.formGroupSelector).querySelector(options.errorM);
                     errorElement.innerText = '';
-                    inputElement.parentElement.classList.remove('invalid')
+                    getParent(inputElement, options.formGroupSelector).classList.remove('invalid')
                 }
             }
         });

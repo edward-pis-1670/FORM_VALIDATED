@@ -1,18 +1,23 @@
 
 // Constructor function (Doi tuong Validator)
 function Validator(options) {
+    var colectionRules = {};
     // Ham thuc hien validate
     function validate(inputElement, rule) {
-        var errorMessage = rule.test(inputElement.value);
+        var errorMessage;
+        var rules = colectionRules[rule.selector];
         var errorElement = inputElement.parentElement.querySelector(options.errorElement);
-
-                    if(errorMessage) {
-                        errorElement.innerText = errorMessage;
-                        inputElement.parentElement.classList.add('invalid')
-                    } else {
-                        errorElement.innerText = '';
-                        inputElement.parentElement.classList.remove('invalid')
-                    }
+        for(i = 0; i < rules.length; i++) {
+            errorMessage = rules[i](inputElement.value)
+            if (errorMessage) break;
+        }
+        if(errorMessage) {
+            errorElement.innerText = errorMessage;
+            inputElement.parentElement.classList.add('invalid')
+        } else {
+            errorElement.innerText = '';
+            inputElement.parentElement.classList.remove('invalid')
+        }
     }
     // lay element cua form can validate
     var formElement = document.querySelector(options.form);
@@ -20,7 +25,11 @@ function Validator(options) {
         options.rules.forEach(function(rule) {
             var inputElement = formElement.querySelector(rule.selector);
             if (inputElement) {
-
+                if (Array.isArray(colectionRules[rule.selector])) {
+                    colectionRules[rule.selector].push(rule.test);
+                } else {
+                    colectionRules[rule.selector] = [rule.test];
+                }
                 // Xu ly truong hop blur ra khoi input
                 inputElement.onblur = function() {
                     validate(inputElement, rule);

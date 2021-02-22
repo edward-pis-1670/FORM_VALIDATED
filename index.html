@@ -46,12 +46,13 @@
     <script src="main.js"></script>
 
     <script>
-
         Validator({
             form: '#form-1',
             errorElement: '.form-message',
             rules: [
               Validator.isRequired('#fullname'),
+              Validator.isRequired('#email'),
+              Validator.isRequired('#password_confirmation'),
               Validator.isEmail('#email'),
               Validator.minLength('#password', 6),
               Validator.isConfirmed('#password_confirmation', function getConfirm() {

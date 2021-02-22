@@ -18,6 +18,7 @@ function Validator(options) {
             errorElement.innerText = '';
             inputElement.parentElement.classList.remove('invalid')
         }
+        return !errorMessage;
     }
     // lay element cua form can validate
     var formElement = document.querySelector(options.form);
@@ -44,6 +45,35 @@ function Validator(options) {
             }
         });
     }
+    // Xu ly hanh dong Submit
+    if (formElement) {
+        formElement.onsubmit = function (e) {
+            e.preventDefault();
+            var isFormValid = true;
+            // Thuc hien lap qua tung rule & validate
+            options.rules.forEach(function (rule) {
+                var inputElement = formElement.querySelector(rule.selector);
+                var isValid = validate(inputElement, rule);
+                if(!isValid) {
+                    isFormValid = false;
+                }
+            });
+            if (isFormValid) {
+                // Truong hop submit voi JS
+                if (typeof options.onSubmit === 'function') {
+                    var enableInputs =formElement.querySelectorAll('[name]');
+                    var formValues = Array.from(enableInputs).reduce(function (values, input){
+                        return (values[input.name] =input.value) && values;
+                    }, {})
+                    options.onSubmit(formValues);
+                }
+                // Truong hop submit mac dinh
+                else {
+                    formElement.submit();
+                }
+            }
+        }
+    }
 }
 
 
@@ -52,11 +82,11 @@ function Validator(options) {
 // Nguyen tac cua cac rule:
 // 1.Khi co loi, thi tra ra messagge loi
 // 2.Khi hop le, thi khong tra ra gi ca.(Undefinded)
-Validator.isRequired = function(selector) {
+Validator.isRequired = function(selector, message) {
     return {
         selector: selector,
         test: function(value) {
-            return value.trim() ? undefined : 'Vui lòng nhập trường này'
+            return value.trim() ? undefined : message || 'Vui lòng nhập trường này'
         }
     }
 };
